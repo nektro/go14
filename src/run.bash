@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Copyright 2009 The Go Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
@@ -23,7 +23,7 @@ ulimit -c 0
 # non-root process is allowed to set the high limit.
 # This is a system misconfiguration and should be fixed on the
 # broken system, not "fixed" by ignoring the failure here.
-# See longer discussion on golang.org/issue/7381. 
+# See longer discussion on golang.org/issue/7381.
 [ "$(ulimit -H -n)" == "unlimited" ] || ulimit -S -n $(ulimit -H -n)
 [ "$(ulimit -H -d)" == "unlimited" ] || ulimit -S -d $(ulimit -H -d)
 
@@ -83,7 +83,7 @@ xcd() {
 #	$ set -e; (set -e; false; echo still here) || echo stopped
 #	still here
 #	# somehow the '|| echo stopped' broke the inner set -e.
-#	
+#
 # To avoid this bug, every command in a subshell should have '|| exit 1' on it.
 # Strictly speaking, the test may be unnecessary on the final command of
 # the subshell, but it aids later editing and may avoid future bash bugs.
@@ -136,7 +136,7 @@ android-arm | dragonfly-386 | dragonfly-amd64 | freebsd-386 | freebsd-amd64 | fr
 	go test -ldflags '-linkmode=auto' ../testtls || exit 1
 	go test -ldflags '-linkmode=external' ../testtls || exit 1
 	extlink=1
-	
+
 	case "$GOHOSTOS-$GOARCH" in
 	netbsd-386 | netbsd-amd64) ;; # no static linking
 	freebsd-arm) ;; # -fPIC compiled tls code will use __tls_get_addr instead
@@ -169,7 +169,7 @@ linux-linux-amd64-1 | freebsd-freebsd-amd64-1 | darwin-darwin-amd64-1)
 	go test -race -i runtime/race flag os/exec
 	go test -race -run=Output runtime/race
 	go test -race -short flag os/exec
-	
+
 	# Test with external linking; see issue 9133.
 	if [ "$extlink" = 1 ]; then
 		go test -race -short -ldflags=-linkmode=external flag os/exec

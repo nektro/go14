@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Copyright 2013 The Go Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
@@ -18,7 +18,7 @@ case $(uname) in
 	# why Apple? why?
 	if sysctl machdep.cpu.extfeatures | grep -qv EM64T; then
 		usage
-	fi 
+	fi
 	;;
 "Linux")
 	if [ $(uname -m) != "x86_64" ]; then

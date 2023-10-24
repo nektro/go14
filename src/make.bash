@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Copyright 2009 The Go Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
@@ -42,7 +42,7 @@
 # This is used by cgo.  Default is CC.
 #
 # CXX_FOR_TARGET: Command line to run to compile C++ code for GOARCH.
-# This is used by cgo. Default is CXX, or, if that is not set, 
+# This is used by cgo. Default is CXX, or, if that is not set,
 # "g++" or "clang++".
 #
 # GO_DISTFLAGS: extra flags to provide to "dist bootstrap". Use "-s"

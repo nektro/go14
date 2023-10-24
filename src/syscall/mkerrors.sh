@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # Copyright 2009 The Go Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
@@ -404,7 +404,7 @@ main(void)
 		printf("\t%d: \"%s\",\n", e, buf);
 	}
 	printf("}\n\n");
-	
+
 	printf("\n\n// Signal table\n");
 	printf("var signals = [...]string {\n");
 	qsort(signals, nelem(signals), sizeof signals[0], intcmp);
