@@ -49,64 +49,6 @@
 # to build a statically linked toolchain.
 
 set -e
-if [ ! -f run.bash ]; then
-	echo 'make.bash must be run from $GOROOT/src' 1>&2
-	exit 1
-fi
-
-# Test for Windows.
-case "$(uname)" in
-*MINGW* | *WIN32* | *CYGWIN*)
-	echo 'ERROR: Do not use make.bash to build on Windows.'
-	echo 'Use make.bat instead.'
-	echo
-	exit 1
-	;;
-esac
-
-# Test for bad ld.
-if ld --version 2>&1 | grep 'gold.* 2\.20' >/dev/null; then
-	echo 'ERROR: Your system has gold 2.20 installed.'
-	echo 'This version is shipped by Ubuntu even though'
-	echo 'it is known not to work on Ubuntu.'
-	echo 'Binaries built with this linker are likely to fail in mysterious ways.'
-	echo
-	echo 'Run sudo apt-get remove binutils-gold.'
-	echo
-	exit 1
-fi
-
-# Test for bad SELinux.
-# On Fedora 16 the selinux filesystem is mounted at /sys/fs/selinux,
-# so loop through the possible selinux mount points.
-for se_mount in /selinux /sys/fs/selinux
-do
-	if [ -d $se_mount -a -f $se_mount/booleans/allow_execstack -a -x /usr/sbin/selinuxenabled ] && /usr/sbin/selinuxenabled; then
-		if ! cat $se_mount/booleans/allow_execstack | grep -c '^1 1$' >> /dev/null ; then
-			echo "WARNING: the default SELinux policy on, at least, Fedora 12 breaks "
-			echo "Go. You can enable the features that Go needs via the following "
-			echo "command (as root):"
-			echo "  # setsebool -P allow_execstack 1"
-			echo
-			echo "Note that this affects your system globally! "
-			echo
-			echo "The build will continue in five seconds in case we "
-			echo "misdiagnosed the issue..."
-
-			sleep 5
-		fi
-	fi
-done
-
-# Test for debian/kFreeBSD.
-# cmd/dist will detect kFreeBSD as freebsd/$GOARCH, but we need to
-# disable cgo manually.
-if [ "$(uname -s)" == "GNU/kFreeBSD" ]; then
-        export CGO_ENABLED=0
-fi
-
-# Clean old generated file that will cause problems in the build.
-rm -f ./runtime/runtime_defs.go
 
 # Finally!  Run the build.
 
@@ -118,17 +60,8 @@ DEFGOROOT='-DGOROOT_FINAL="'"$GOROOT_FINAL"'"'
 
 mflag=""
 case "$GOHOSTARCH" in
-386) mflag=-m32;;
 amd64) mflag=-m64;;
 esac
-if [ "$(uname)" == "Darwin" ]; then
-	# golang.org/issue/5261
-	mflag="$mflag -mmacosx-version-min=10.6"
-fi
-# if gcc does not exist and $CC is not set, try clang if available.
-if [ -z "$CC" -a -z "$(type -t gcc)" -a -n "$(type -t clang)" ]; then
-	export CC=clang CXX=clang++
-fi
 ${CC:-gcc} $mflag -O2 -Wall -Werror -o cmd/dist/dist -Icmd/dist "$DEFGOROOT" cmd/dist/*.c
 
 # -e doesn't propagate out of eval, so check success by hand.
@@ -173,9 +106,3 @@ fi
 echo "# Building packages and commands for $GOOS/$GOARCH."
 CC=$CC_FOR_TARGET "$GOTOOLDIR"/go_bootstrap install $GO_FLAGS -ccflags "$GO_CCFLAGS" -gcflags "$GO_GCFLAGS" -ldflags "$GO_LDFLAGS" -v std
 echo
-
-rm -f "$GOTOOLDIR"/go_bootstrap
-
-if [ "$1" != "--no-banner" ]; then
-	"$GOTOOLDIR"/dist banner
-fi
