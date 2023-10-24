@@ -30,3 +30,17 @@ put the following in your .profile:
     export PATH=$PATH:$GOROOT/bin
 
 See doc/install.html for more details.
+
+--
+
+Repo Notes
+
+[meghan@nixos:~/src]$ git clone https://go.googlesource.com/go go14
+[meghan@nixos:~/src]$ cd go14/
+[meghan@nixos:~/src/go14]$ git checkout go1.4.3
+[meghan@nixos:~/src/go14]$ git branch -d master
+[meghan@nixos:~/src/go14]$ git remote remove origin
+[meghan@nixos:~/src/go14]$ git checkout -b master
+[meghan@nixos:~/src/go14]$ git tag -d $(git tag -l)
+[meghan@nixos:~/src/go14]$ git remote add origin https://github.com/nektro/go14.git
+[meghan@nixos:~/src/go14]$ git push origin master
